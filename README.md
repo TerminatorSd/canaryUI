@@ -26,10 +26,8 @@ curl -X POST http://39.108.163.91:6066/job/firstTry/build?delay=0sec --user jenk
 【A】：安装Strict Crumb Issuer Plugin插件，暂时关掉sessionId
 ```
 
-
-
-
-# 正常
+```
+\# 正常
 map $COOKIE_canary $group {
     # canary account
     ~*aaa$ server_canary;
@@ -79,6 +77,7 @@ upstream server_default {
     server 127.0.0.1:6002 weight=1 max_fails=1 fail_timeout=30s;
     # server 127.0.0.1:6004 weight=1 max_fails=1 fail_timeout=30s;
 }
+```
 
 Q: Invalid Host header
 A: https://blog.csdn.net/qq_36451496/article/details/99712925
