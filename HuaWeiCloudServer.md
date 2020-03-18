@@ -1,5 +1,5 @@
 ### 购买华为云服务器流程
-购买过程大概花费十分钟，如果是按需付费的话，便宜的机器有两三块钱一天的，用来做一些服务器上的实践应该还是蛮不错的。
+购买过程大概花费十分钟，如果是按需付费的话，便宜的机器有两三块钱一天的，用来做一些服务器上的实践应该还是蛮不错的选择。
 
 #### 访问购买链接
 https://console.huaweicloud.com/ecm/?region=cn-east-2#/ecs/createVm
@@ -21,7 +21,7 @@ https://console.huaweicloud.com/ecm/?region=cn-east-2#/ecs/createVm
 ![mima](./img/mima.png)
 
 #### 确认信息
-要确认的信息包括你刚刚选择的配置和购买的台数，因为要做灰度发布需要两台机器，所以我买了两台。一台也可以操作，就是会麻烦一点。记得勾选阅读并同意的checkbox，不然不能购买。
+要确认的信息包括你刚刚选择的配置和购买的台数，因为要做灰度发布需要两台机器，所以我买了两台。一台也可以操作，就是会麻烦一点。记得勾选阅读并同意的checkbox，否则不能购买。
 ![two](./img/two.png)
 
 #### 查看机器
@@ -39,12 +39,15 @@ https://console.huaweicloud.com/ecm/?region=cn-east-2#/ecs/createVm
 sudo yum install nginx
 ```
 安装完了，在终端输入nginx -t检查一下是否安装成功。如果安装成功，它会显示nginx配置文件的状态，以及位置。
+
 ![nginx-t](./img/nginx-t.png)
 
 此时nginx还没有启动，在终端中输入nginx或nginx -s reload命令即可启动，此时看到的nginx相关进程如下，表明已经启动成功。
+
 ![nginx-reload](./img/nginx-reload.png)
 
 在浏览器里访问你的服务器公网ip，如果能看到下面的页面说明nginx真的启动成功。
+
 ![nginx-html](./img/nginx-html.jpg)
 
 ### 本地准备代码
@@ -59,8 +62,10 @@ cd canaryDemo
 ng serve
 ```
 访问localhost的4200端口查看页面，然后把项目根目录下src中的index.html的title改成A-CanaryDemo，可以看到页面会进行实时地刷新。我们用title 来标识灰度发布过程中两边不同的服务需要部署的代码。
+
 ![local-a-demo](./img/local-a-demo.jpg)
-打包之后，根目录的dist目录下多了项目同名的文件夹，把这个拷贝到我们刚刚申请的第一台，也就是我们安装了nginx的服务器上
+
+接下来对代码打包并，打包之后，根目录的dist目录下多了项目同名的文件夹，把这个拷贝到我们刚刚申请的第一台，也就是我们安装了nginx的服务器上。
 ```
 // 上面一步检查没问题，把项目打包一下，准备发送到服务器
 ng build --prod
@@ -70,7 +75,7 @@ scp -r ./dist/canaryDemo root@xx.xx.xx.xx:/var
 
 #### 服务器更新配置
 先去服务器上/var 的位置上看一下，是否已经有了这个文件，如果有了的话，接着到下一步。
-即修改Nginx配置把访问该服务器IP 的请求转发到我们刚刚上传上来的页面上。上满提到过可以通过nginx -t这个命令来查看Nginx 配置文件的位置，在这一步，我们要去编辑那个文件。
+即修改Nginx配置把访问该服务器IP的请求转发到我们刚刚上传上来的页面上。上满提到过可以通过nginx -t 这个命令来查看Nginx 配置文件的位置，在这一步，我们要去编辑那个文件。
 ```
 vi /etc/nginx/nginx.conf
 ```
@@ -81,7 +86,8 @@ vi /etc/nginx/nginx.conf
 ```
 nginx -s reload
 ```
-这时候可以看到页面已经变成了刚刚我们在本地改的页面，而且title确实是A-CanaryDemo
+这时候去访问我们服务器的IP 地址可以看到页面已经变成了刚刚我们在本地改的页面，而且title确实是A-CanaryDemo.
+
 ![a-demo.png](./img/a-demo.png)
 
 #### 操作另一台服务器
