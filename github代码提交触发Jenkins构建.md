@@ -1,9 +1,5 @@
 ### github 生成token
-在jenkins 上关联任务到github 代码仓的时候发现关联不到远程仓库
-
-![jenkins-a-1](./img/jenkins-a-1.jpg)
-
-是因为Jenkins 还没有获取到github 的授权（其实是因为我的服务器没有安装git），无法访问。所以需要先去github 上生成一个token 给Jenkins 使用。
+要实现github 的代码提交触发Jenkins 任务自动执行，需要在github 上生成token，然后添加到Jenkins 中。
 
 ![jenkins-git-token](./img/jenkins-git-token.jpg)
 
