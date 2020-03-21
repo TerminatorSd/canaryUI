@@ -48,7 +48,7 @@ service jenkins start/stop/restart
 ![jenkins-create](./img/jenkins-create.jpg)
 
 #### 创建任务
-先按照任务拆解部分的设定创建三个FreeStyle 类型的Jenkins 任务。任务详情信息可以不填，直接保存就好，下一步我们再来配置每个任务的具体信息。
+先按照任务拆解部分的设定创建三个FreeStyle 类型的Jenkins 任务，记得使用英文名字，中文名字后面建文件夹比较麻烦。任务详情信息可以不填，直接保存就好，下一步我们再来配置每个任务的具体信息。
 ![jenkins-free](./img/jenkins-free.jpg)
 
 #### 配置任务
@@ -56,10 +56,7 @@ service jenkins start/stop/restart
 
 ![jenkins-task-ok](./img/jenkins-task-ok.jpg)
 
-首先是灰度测试A
-![jenkins-a](./img/jenkins-a.jpg)
-
-灰度测试A要做的事情是下载最新代码到Jenkins 所在的服务器，然后修改流量分发策略（A 边机器的Nginx 配置），使得灰度流量访问A 边的最新代码，其余流量访问B 边的代码。
+首先是灰度测试A，灰度测试A要做的事情是下载最新代码到Jenkins 所在的服务器，然后修改流量分发策略（A 边机器的Nginx 配置），使得灰度流量访问A 边的最新代码，其余流量访问B 边的代码。
 
 现代前端项目都要进行构建打包这一步。但是廉价的1核2G的云服务器在完成构建方面有些力不从心，CPU 经常爆表。**所以我们在这里把打包出得出的生产包纳入git 管理，每次的代码更新会同步最新的生产包到github，因此Jenkins 任务把生产包拉下来，放在指定位置即可完成一次新代码的部署。**
 
@@ -67,15 +64,16 @@ service jenkins start/stop/restart
 
 ![jenkins-no-git](./img/jenkins-no-git.jpg)
 
-执行一次构建任务（第一次构建，在git fetch 那一步可能会耗费比较久的时间），然后点击本次构建进去查看Console 输出，可以确定执行Jenkins 任务的位置是位于服务器上的/var/lib/jenkins/workspace/your_task_name。
+执行一次构建任务（在git fetch 那一步耗时不稳定，有时比较久），然后点击本次构建进去查看Console 输出，可以确定执行Jenkins 任务的位置是位于服务器上的/var/lib/jenkins/workspace/your_task_name。
 
 ![jenkins-build](./img/jenkins-build.jpg)
 
 ![jenkins-loc](./img/jenkins-loc.jpg)
 
-继续编辑灰度测试A 任务，添加build shell，也就是每次任务执行时要执行的命令
+继续编辑灰度测试A 任务，添加build shell，也就是每次任务执行时要执行的命令：先拉取最新的代码，然后把代码根目录下的dist目录复制到部署代码的位置，这里我们指定的位置是/var/canaryDemo。这一步填写的shell 命令在使用jenkins 用户执行时可能会遇到权限问题，可以先用root 用户登录，把/var 目录的归属改为jenkins 用户.
 ```
 git pull
+rm -rf /var/canaryDemo
 scp -r dist /var/canaryDemo
 ```
 
